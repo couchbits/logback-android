@@ -1,0 +1,39 @@
+apply plugin: 'maven'
+
+task createPom {
+    description "Generates pom.xml"
+    pom {
+        project {
+            groupId GROUP
+            artifactId POM_ARTIFACT_ID
+            version VERSION_NAME
+            packaging POM_PACKAGING
+        }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+
+        configurations.compileOnly.allDependencies.each { dependency ->
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dependency.group)
+            dependencyNode.appendNode('artifactId', dependency.name)
+            dependencyNode.appendNode('version', dependency.version)
+        }
+    }.writeTo("$buildDir/pom.xml")
+}
+
+//apply plugin: 'maven-publish'
+//
+//
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId = 'org.gradle.sample'
+//            artifactId = 'library'
+//            version = '1.1'
+//
+//            from components.java
+//        }
+//    }
+//}
+
